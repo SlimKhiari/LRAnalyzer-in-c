@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 				// traiter le cas ou le flot est vide (c'est-à-dire il ne contient que le "$") 
 				if(flot->premier == NULL)
 				{
-					// chercher le rang du "$" dans le tableau les terminaux_et_non pour pourvoir la bonne transformation qui correspond
+					// chercher le rang du "$" dans le tableau les terminaux_et_non pour pourvoir trouver la bonne transformation qui correspond
 					for(o=0;o<nbr_colonnes;o++)
 					{
 						if(les_terminaux_et_non[o] ==  '$')
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 					break;
 				}	
 				// traiter le cas ou le flot n'est pas vide (c'est-à-dire il contient les caracteres + "$") 
-				// chercher le rang du "caractere_a_regarder" dans le tableau les terminaux_et_non pour pourvoir la bonne transformation qui correspond
+				// chercher le rang du "caractere_a_regarder" dans le tableau les terminaux_et_non pour pourvoir trouver la bonne transformation qui correspond
 				else if(caractere_a_regarder == les_terminaux_et_non[i])
 				{
 					// traiter le décalage dans la pile
