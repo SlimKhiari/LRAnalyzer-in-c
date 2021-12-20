@@ -6,8 +6,8 @@
 
 int main(int argc, char* argv[])
 {	
-	size_t w,j,l;
-	int k,i,d,q,o;
+	size_t w,j,l; // des compteurs
+	int k,i,d,q,o; // des compteurs
 	int nbr_carac_terminal=0,nbr_carac_non_terminal=0;
 	file_read fichier_lu = read_file(argv[1]);	
 	int nbr_lignes = fichier_lu.t.nblines-1;
@@ -70,26 +70,31 @@ int main(int argc, char* argv[])
 		i=0;
 		while(i<nbr_colonnes)
 		{
+				// traiter le cas ou le flot est vide (c'est-à-dire il ne contient que le "$") 
 				if(flot->premier == NULL)
 				{
+					// chercher le rang du "$" dans le tableau les terminaux_et_non pour pourvoir la bonne transformation qui correspond
 					for(o=0;o<nbr_colonnes;o++)
 					{
 						if(les_terminaux_et_non[o] ==  '$')
 						{
+							// traiter les réductions dans la pile
 							if(table[numero_de_ligne_a_regarder][o].red_dec == 'r')
 							{
 								regle = table[numero_de_ligne_a_regarder][o].numero_red_dec;
 														printf("  (réduction %c%d)\n",table[numero_de_ligne_a_regarder][o].red_dec,table[numero_de_ligne_a_regarder][o].numero_red_dec-1);
 								j=0;
+								// savoir jusqu'à quand on va s'arreter à supprimer dans la pile, ensuite on supprime pour remplacer avec la bonne regle
 								while(fichier_lu.G.rules[regle-1].rhs[j]!='\0'){
 								      j++; 
 								  }
-								  
+								
 								for(d=0; d<2*j; d++)
 								{
 									depiler(pile);
 								}
 								
+								// remplacement de ce qui a été supprimé par le non terminal de la regle correpondante
 								numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 								empiler(pile,fichier_lu.G.rules[regle-1].lhs);
 								caractere_a_regarder = fichier_lu.G.rules[regle-1].lhs;
@@ -105,6 +110,7 @@ int main(int argc, char* argv[])
 								}
 								break;
 							}
+							// traiter l'"accept" dans la pile
 							else if(table[numero_de_ligne_a_regarder][o].red_dec == 'a')
 							{
 								printf("Accept\n"); return 0;
@@ -118,30 +124,36 @@ int main(int argc, char* argv[])
 					}
 					break;
 				}	
+				// traiter le cas ou le flot n'est pas vide (c'est-à-dire il contient les caracteres + "$") 
+				// chercher le rang du "caractere_a_regarder" dans le tableau les terminaux_et_non pour pourvoir la bonne transformation qui correspond
 				else if(caractere_a_regarder == les_terminaux_et_non[i])
 				{
+					// traiter le décalage dans la pile
 					if(table[numero_de_ligne_a_regarder][i].red_dec == 'd')
 					{
 						printf("  (décalage %c%d)\n",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec);
+						// ajout du symbole "d" et le numéro qui correspond
 						empiler(pile,caractere_a_regarder);
 						empiler(pile,table[numero_de_ligne_a_regarder][i].numero_red_dec);
 						defiler(flot);
 						break;
 					}
+					// traiter les réductions dans la pile
 					else if(table[numero_de_ligne_a_regarder][i].red_dec == 'r')
 					{
 						regle = table[numero_de_ligne_a_regarder][i].numero_red_dec;
 												printf(" (réduction %c%d)\n",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec-1);
 						j=0;
+						// savoir jusqu'à quand on va s'arreter à supprimer dans la pile, ensuite on supprime pour remplacer avec la bonne regle
 						while(fichier_lu.G.rules[regle-1].rhs[j]!='\0'){
 						      j++; 
 						  }
-						  
 						for(d=0; d<2*j; d++)
 						{
 							depiler(pile);
 						}
 						
+						// remplacement de ce qui a été supprimé par le non terminal de la regle correpondante
 						numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 						empiler(pile,fichier_lu.G.rules[regle-1].lhs);
 						caractere_a_regarder = fichier_lu.G.rules[regle-1].lhs;
@@ -157,6 +169,7 @@ int main(int argc, char* argv[])
 						}
 						break;
 					}
+					// traiter l'"accept" dans la pile
 					else if(table[numero_de_ligne_a_regarder][o].red_dec == 'a')
 					{
 						printf("Accept\n"); return 0;
