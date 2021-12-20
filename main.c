@@ -10,18 +10,18 @@ int main(int argc, char* argv[])
 	int k,i,d,q,o; // des compteurs
 	int nbr_carac_terminal=0,nbr_carac_non_terminal=0;
 	file_read fichier_lu = read_file(argv[1]);	
-	int nbr_lignes = fichier_lu.t.nblines-1;
-	int nbr_colonnes = nbr_colonnes_table(fichier_lu.G,&nbr_carac_terminal,&nbr_carac_non_terminal)+1;
-	char *les_terminaux_et_non = (char*) malloc(nbr_colonnes*sizeof(char*));
+	int nbr_lignes = fichier_lu.t.nblines-1;  // nombre de lignes de la table 2D de la grammaire
+	int nbr_colonnes = nbr_colonnes_table(fichier_lu.G,&nbr_carac_terminal,&nbr_carac_non_terminal)+1; // nombre de colonnes de la table 2D de la grammaire
+	char *les_terminaux_et_non = (char*) malloc(nbr_colonnes*sizeof(char*)); // les terminaux et les non terminaux de la grmmaire dans un tableau 1D pour récupérer la bonne transformation
 	File *flot = malloc(sizeof(*flot)); flot->premier=NULL;
 	Pile *pile=malloc(sizeof(*pile)); pile->premier=NULL;
-	Table **table = NULL;
+	Table **table = NULL; // la table 2D de la grammaire
 	FILE *f=fopen(argv[1], "r");
-	char caractere_a_regarder;
-	int numero_de_ligne_a_regarder;
+	char caractere_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique
+	int numero_de_ligne_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique
 	int regle = 0;
 	
-	// allocation dynamique de la table + initialisation + affichage
+	// allocation dynamique de la table 2D de la grammaire (car plus pratique à manipuler) + initialisation + affichage
 	table = (Table**)malloc(nbr_lignes*sizeof(Table*));
 	for(int c=0;c<nbr_lignes;c++)
 	{
