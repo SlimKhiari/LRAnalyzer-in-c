@@ -8,14 +8,13 @@
 
 int main(int argc, char* argv[])
 {	
-	size_t taille_regles=0,tmp=0; // varibles inutiles
-	size_t o,i,j; // des compteurs
+	size_t o=0,i=0,j=0; // des compteurs
 	int verif_ast_vide=0; // = 0 si vide sinon 1
 	
 	//Les variables utilisées pour construire l'analyseur
 	size_t regle = 0;
 	int nbr_carac_terminal=0,nbr_carac_non_terminal=0;
-	size_t verif=0; // la variable verif permet de verifier si un caractere appartient ou non à la grammaire
+	size_t verif_caractere_dans_grammaire=0; // cette variable permet de verifier si un caractere appartient ou non à la grammaire
 	file_read fichier_lu = read_file(argv[1]);	
 	size_t nbr_lignes = fichier_lu.t.nblines-1;  // nombre de lignes de la table 2D de la grammaire
 	size_t nbr_colonnes = nbr_colonnes_table(fichier_lu.G,&nbr_carac_terminal,&nbr_carac_non_terminal)+2; // nombre de colonnes de la table 2D de la grammaire
@@ -23,8 +22,8 @@ int main(int argc, char* argv[])
 	File *flot = malloc(sizeof(*flot)); flot->premier=NULL;
 	Pile *pile=malloc(sizeof(*pile)); pile->premier=NULL;
 	FILE *f=fopen(argv[1], "r");
-	char caractere_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique
-	size_t numero_de_ligne_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique
+	char caractere_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique depuis la table 2D
+	size_t numero_de_ligne_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique depuis la table 2D
 	
 	//Les variables utilisées pour construire l'ast 
 	char *ast = (char*) malloc(MAX*sizeof(char*)); // utilisé pour enregistrer l'ast
@@ -78,11 +77,11 @@ int main(int argc, char* argv[])
 	{
 		if(caractere_a_regarder == les_terminaux_et_non[o])	
 		{
-			verif=1;
+			verif_caractere_dans_grammaire=1;
 			break;
 		}			
 	}
-	if(verif==0)
+	if(verif_caractere_dans_grammaire==0)
 	{
 		printf("\n>> Caractere non reconnu par la grammaire\n");
 		
@@ -90,10 +89,10 @@ int main(int argc, char* argv[])
 	
 	o=0;
 	
-	while(table[numero_de_ligne_a_regarder][o].red_dec != 'a' && verif==1)
+	while(table[numero_de_ligne_a_regarder][o].red_dec != 'a' && verif_caractere_dans_grammaire==1)
 	{
 		o=0;
-		verif=0;
+		verif_caractere_dans_grammaire=0;
 		caractere_a_regarder = recup_premier_element_file(flot);
 		numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 		i=0;
@@ -108,11 +107,11 @@ int main(int argc, char* argv[])
 					{
 						if(les_terminaux_et_non[o] ==  '$')
 						{
-							verif=1;	
+							verif_caractere_dans_grammaire=1;	
 							// traiter les réductions dans la pile
 							if(table[numero_de_ligne_a_regarder][o].red_dec == 'r')
 							{
-								*pile = pile_reduction(fichier_lu,pile,les_terminaux_et_non,caractere_a_regarder,o,
+								*pile = pile_reduction_derniere_etape(fichier_lu,pile,les_terminaux_et_non,caractere_a_regarder,o,
 								numero_de_ligne_a_regarder,nbr_colonnes,table, ast);
 								
 							}
@@ -153,7 +152,7 @@ int main(int argc, char* argv[])
 				// chercher le rang du "caractere_a_regarder" dans le tableau les terminaux_et_non pour pourvoir trouver la bonne transformation qui correspond
 				else if(caractere_a_regarder == les_terminaux_et_non[i])
 				{
-					verif=1;
+					verif_caractere_dans_grammaire=1;
 					// traiter le décalage dans la pile
 					if(table[numero_de_ligne_a_regarder][i].red_dec == 'd')
 					{
@@ -162,10 +161,8 @@ int main(int argc, char* argv[])
 						empiler(pile,caractere_a_regarder);
 						empiler(pile,table[numero_de_ligne_a_regarder][i].numero_red_dec);
 						
-						// gérer le décalage dans l'ast 
+						// mise à jour de l'ast 
 						ast = ast_decalage(ast,caractere_a_regarder,verif_ast_vide);
-						
-						//taille_arbre = taille_ast(ast);
 						
 						defiler(flot);
 						
@@ -202,13 +199,12 @@ int main(int argc, char* argv[])
 								i++;
 						}
 						
-						// gérer la réduction dans l'ast 
+						// mise à jour de l'ast
 						ast = ast_reduction(ast,j,fichier_lu,regle);
 					}
 					else 
 					{
 						printf("\n\n>> Non acceptance\n"); 
-						// desallocation de la table
 						for(i=0; i <nbr_colonnes; i++)
 						{
 							free(table[i]);
@@ -221,12 +217,12 @@ int main(int argc, char* argv[])
 				}
 
 				else {
-					verif=0;
+					verif_caractere_dans_grammaire=0;
 					i++;
 				}	
 		}
 		printf("flot: "); afficher_file(flot); printf(" | "); printf("pile: ");afficher_pile(pile);
-		if(verif==0)
+		if(verif_caractere_dans_grammaire==0)
 		{
 			printf("\n>> Caractere non reconnu par la grammaire\n");
 			for(i=0; i <nbr_colonnes; i++)

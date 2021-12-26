@@ -44,7 +44,7 @@ char recup_premier_element_file(File *file);
 int nbr_colonnes_table(grammar G,int *nbr_carac_terminal, int *nbr_carac_non_terminal);
 Table remplissage_table(Table** table, file_read fichier_lu,char* les_terminaux_et_non,int nbr_carac_terminal,int nbr_colonnes);
 char recuperation_des_terminaux_et_non(FILE *f,char *les_terminaux_et_non);
-Pile pile_reduction(file_read fichier_lu, Pile *pile,char *les_terminaux_et_non, char caractere_a_regarder, int o,int numero_de_ligne_a_regarder, int nbr_colonnes, Table **table, char* ast);
+Pile pile_reduction_derniere_etape(file_read fichier_lu, Pile *pile,char *les_terminaux_et_non, char caractere_a_regarder, int o,int numero_de_ligne_a_regarder, int nbr_colonnes, Table **table, char* ast);
 
 
 #endif
