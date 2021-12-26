@@ -1,3 +1,4 @@
+// Auteurs : Slim Khiari et Chahed Benslama
 #include <stdio.h>
 #include <stdlib.h>
 #include "lranalyzer.h"
@@ -9,8 +10,7 @@
 int main(int argc, char* argv[])
 {	
 	size_t o=0,i=0,j=0; // des compteurs
-	int verif_ast_vide=0; // = 0 si vide sinon 1
-	
+
 	//Les variables utilisées pour construire l'analyseur
 	size_t regle = 0;
 	int nbr_carac_terminal=0,nbr_carac_non_terminal=0;
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	file_read fichier_lu = read_file(argv[1]);	
 	size_t nbr_lignes = fichier_lu.t.nblines-1;  // nombre de lignes de la table 2D de la grammaire
 	size_t nbr_colonnes = nbr_colonnes_table(fichier_lu.G,&nbr_carac_terminal,&nbr_carac_non_terminal)+2; // nombre de colonnes de la table 2D de la grammaire
-	char *les_terminaux_et_non = (char*) malloc(nbr_colonnes*sizeof(char*)); // les terminaux et les non terminaux de la grmmaire dans un tableau 1D pour récupérer la bonne transformation
+	char *les_terminaux_et_non = (char*) malloc(nbr_colonnes*sizeof(char*)); // les terminaux et les non terminaux de la grammaire dans un tableau 1D pour récupérer la bonne transformation
 	File *flot = malloc(sizeof(*flot)); flot->premier=NULL;
 	Pile *pile=malloc(sizeof(*pile)); pile->premier=NULL;
 	FILE *f=fopen(argv[1], "r");
@@ -32,6 +32,11 @@ int main(int argc, char* argv[])
 	int index_parenthese_ouvrante=0;
 	int mettre_non_terminal=0;
 	int indexReduction=0;
+	int verif_ast_vide=0; // = 0 si vide sinon 1
+	
+	/***********************************************************************************************************************/
+	/********************************INITIALISATION DES TABLEAUX / PILES / FILES********************************************/
+	/***********************************************************************************************************************/
 	
 	// allocation dynamique de la table 2D de la grammaire (car plus pratique à manipuler) + initialisation
 	Table **table = NULL; 
@@ -60,19 +65,21 @@ int main(int argc, char* argv[])
 	// initialisation de la pile
 	empiler(pile,0);
 	
-	// récupération des terminaux et non terminaux
+	// récupération des terminaux et non terminaux depuis la grammaire
 	*les_terminaux_et_non = recuperation_des_terminaux_et_non(f,les_terminaux_et_non);
   	
-	// remplissage de la table
+	// remplissage de la table 2D à partir de la table 1D
 	**table = remplissage_table(table,fichier_lu,les_terminaux_et_non,nbr_carac_terminal,nbr_colonnes);
 	
-	// analyse synthaxique	
+	/***********************************************************************************************************************/
+	/************************************************ANALYSE SYNTHAXIQUE ***************************************************/
+	/***********************************************************************************************************************/
+	
+	//début de l'analyse synthaxique 
 	printf("L'analyse synthaxique du %s sur %s : \n\n",argv[1], argv[2]);					
 	printf("flot: "); afficher_file(flot); printf(" | "); printf("pile: ");afficher_pile(pile);
-	
 	numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 	caractere_a_regarder = recup_premier_element_file(flot);
-	
 	for(o=0;o<nbr_colonnes;o++)
 	{
 		if(caractere_a_regarder == les_terminaux_et_non[o])	
@@ -89,14 +96,16 @@ int main(int argc, char* argv[])
 	
 	o=0;
 	
-	while(table[numero_de_ligne_a_regarder][o].red_dec != 'a' && verif_caractere_dans_grammaire==1)
+	//Suite de l'analyse synthaxique + fin de l'analyse synthaxique
+	while(1>0)
 	{
-		o=0;
 		verif_caractere_dans_grammaire=0;
 		caractere_a_regarder = recup_premier_element_file(flot);
 		numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 		i=0;
 		taille_arbre=0;
+		
+		//On parcourt les colonnes (donc les caracteres de la grammaire)de la table 2D construite precedemment afin de connaitre l'index du 'caractere_a_regarder' dans ce cette table 
 		while(i<nbr_colonnes)
 		{
 				// traiter le cas ou le flot est vide (c'est-à-dire il ne contient que le "$") 
@@ -108,15 +117,14 @@ int main(int argc, char* argv[])
 						if(les_terminaux_et_non[o] ==  '$')
 						{
 							verif_caractere_dans_grammaire=1;	
-							// traiter les réductions dans la pile
+							// traiter les réductions dans la pile ( pas de décalage possible)
 							if(table[numero_de_ligne_a_regarder][o].red_dec == 'r')
 							{
 								*pile = pile_reduction_derniere_etape(fichier_lu,pile,les_terminaux_et_non,caractere_a_regarder,o,
 								numero_de_ligne_a_regarder,nbr_colonnes,table, ast);
 								
 							}
-							
-							// traiter l'"accept" dans la pile
+							// traiter l'acceptation dans la pile
 							else if(table[numero_de_ligne_a_regarder][o].red_dec == 'a')
 							{
 								printf("\n>> Accept\n");
@@ -130,6 +138,7 @@ int main(int argc, char* argv[])
 								free(ast);
 								return 0;
 							}
+							// traiter la non acceptation dans la pile
 							else 
 							{
 								printf("\n>> Non acceptance\n"); 
@@ -142,7 +151,6 @@ int main(int argc, char* argv[])
 								free(ast);
 								return 0;
 							}
-							
 						}
 					}
 					break;
@@ -160,30 +168,27 @@ int main(int argc, char* argv[])
 						// ajout du symbole "d" et le numéro qui correspond
 						empiler(pile,caractere_a_regarder);
 						empiler(pile,table[numero_de_ligne_a_regarder][i].numero_red_dec);
-						
 						// mise à jour de l'ast 
 						ast = ast_decalage(ast,caractere_a_regarder,verif_ast_vide);
-						
+						//suppression du caractere du flot
 						defiler(flot);
-						
 						break;
 					}
-					// traiter les réductions dans la pile
+					// traiter la réduction dans la pile
 					else if(table[numero_de_ligne_a_regarder][i].red_dec == 'r')
 					{
-						regle = table[numero_de_ligne_a_regarder][i].numero_red_dec;
 						printf("\n%c%d > ",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec-1);
-						j=0;
+						// connaitre le numero de la regle à appliquer
+						regle = table[numero_de_ligne_a_regarder][i].numero_red_dec;
 						// savoir jusqu'à quand on va s'arreter à supprimer dans la pile, ensuite on supprime pour remplacer avec la bonne regle
+						j=0;
 						while(fichier_lu.G.rules[regle-1].rhs[j]!='\0'){
 						      j++; 
-						  }
-						
+						}
 						for(i=0; i<2*j; i++)
 						{
 							depiler(pile);
 						}
-						
 						// remplacement de ce qui a été supprimé par le non terminal de la regle correpondante
 						numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 						empiler(pile,fichier_lu.G.rules[regle-1].lhs);
@@ -198,7 +203,6 @@ int main(int argc, char* argv[])
 								}
 								i++;
 						}
-						
 						// mise à jour de l'ast
 						ast = ast_reduction(ast,j,fichier_lu,regle);
 					}
@@ -215,7 +219,7 @@ int main(int argc, char* argv[])
 						return 0;
 					}
 				}
-
+				// sinon on continue à chercher l'index du caractere se trouvant dans les colonnes de la table 2D
 				else {
 					verif_caractere_dans_grammaire=0;
 					i++;
