@@ -9,8 +9,7 @@
 
 int main(int argc, char* argv[])
 {	
-	// des compteurs
-	size_t o=0,i=0,j=0;
+	size_t o=0,i=0,j=0; // des compteurs
 
 	//Les variables utilisées pour construire l'analyseur
 	size_t regle = 0;

@@ -1,3 +1,4 @@
+// Auteurs : Slim Khiari et Chahed Benslama
 #ifndef LRANALYZER
 #define LRANALYZER
 

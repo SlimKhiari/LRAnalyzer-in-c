@@ -1,3 +1,4 @@
+// Auteurs : Slim Khiari et Chahed Benslama
 #include <stdio.h>
 #include <stdlib.h>
 #include "lranalyzer.h"
@@ -274,7 +275,7 @@ char recuperation_des_terminaux_et_non(FILE *f,char *les_terminaux_et_non)
 {
 	signed char c;
 	int i=0;
-	// enlevement de la partie de la grammaire du fihier test qui nous interesse pas 
+	// enlevement de la partie de la grammaire du fichier test qui nous interesse pas 
 	while(1)
 	{
 		c=fgetc(f);
