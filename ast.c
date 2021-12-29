@@ -1,4 +1,4 @@
-
+// Auteurs : Slim Khiari et Chahed Benslama
 #include <stdio.h>
 #include <stdlib.h>
 #include "lranalyzer.h"
