@@ -1,4 +1,4 @@
-// Auteurs : Slim Khiari et Chahed Benslama
+// Auteurs : Slim Khiari et Chahed Benslama (aidé par Antoine Vidal pour les fonctions des récupérations des index)
 #include <stdio.h>
 #include <stdlib.h>
 #include "lranalyzer.h"
@@ -22,15 +22,17 @@ int taille_ast(char *ast)
 	return taille_ast;
 }
 
-int indice_crochet_fermant(char* ast, int indice_debut)
+int indice_crochet_fermant(char* ast, int indice_crochet_fermant_recup)
 {
-    int indice_crochet_fermant_recup = indice_debut;
-    
-    while( ast[indice_crochet_fermant_recup] != ']' && indice_crochet_fermant_recup > 0)
+ 
+    while( ast[indice_crochet_fermant_recup] != ']')
     {
-       indice_crochet_fermant_recup = indice_crochet_fermant_recup - 1;
+    	if(indice_crochet_fermant_recup > 0)
+    	{
+    		indice_crochet_fermant_recup = indice_crochet_fermant_recup - 1;
+    	}
     }
-    
+
     return indice_crochet_fermant_recup;
 }
 
@@ -38,33 +40,37 @@ int indice_crochet_ouvrant(char* ast, int indice_crochet_fermant_recup)
 {
     int indice_crochet_ouvrant_recup = indice_crochet_fermant_recup;
     int compteur_des_crochets = 1;
-    char type_de_crochet = ast[indice_crochet_ouvrant_recup];
 
-    while (compteur_des_crochets > 0)
+    do 
     {
         indice_crochet_ouvrant_recup = indice_crochet_ouvrant_recup - 1;
-        type_de_crochet = ast[indice_crochet_ouvrant_recup];
-
-        if ( type_de_crochet== ']')
-            compteur_des_crochets++;
-        else if ( type_de_crochet == '[')
-            compteur_des_crochets--;
-    }
+        if (ast[indice_crochet_ouvrant_recup]== '[')
+        {
+            compteur_des_crochets = compteur_des_crochets-1;
+        }
+        else if (ast[indice_crochet_ouvrant_recup] == ']')
+        {
+            compteur_des_crochets = compteur_des_crochets+1;
+    	}
+    }while (compteur_des_crochets > 0);
 
     return indice_crochet_ouvrant_recup;
 }
 
 int index_non_terminal(char* ast, int taille_regle)
 {
-    int i;
-    int index_crochet_ouvrant_de_non_terminal_a_ajouter = strlen(ast)-1;
-
-    for(i = 0; i < taille_regle; i++)
+    int i=0;
+    int  index_crochet_ouvrant_de_non_terminal_a_ajouter = taille_ast(ast)-1;
+	
+    do
     {
         index_crochet_ouvrant_de_non_terminal_a_ajouter = indice_crochet_ouvrant(ast, index_crochet_ouvrant_de_non_terminal_a_ajouter);
         if (i < taille_regle-1) 
+        {
             index_crochet_ouvrant_de_non_terminal_a_ajouter = indice_crochet_fermant(ast,index_crochet_ouvrant_de_non_terminal_a_ajouter);
-    }
+        }
+        i = i + 1;
+    }while(i < taille_regle);
 
     return index_crochet_ouvrant_de_non_terminal_a_ajouter-1;
 }
