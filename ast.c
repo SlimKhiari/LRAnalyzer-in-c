@@ -138,7 +138,7 @@ char* ast_reduction(char* ast, int taille_regle, file_read fichier_lu,int regle)
 	char ast_tmp_dep[MAX] = {0};
 	int index_parenthese_ouvrante=0;
 	int mettre_non_terminal=0;
-	int indexReduction=0;
+	int indice_reduction=0;
 	int i,a;
 	
 	if(taille_regle == 0)
@@ -150,8 +150,8 @@ char* ast_reduction(char* ast, int taille_regle, file_read fichier_lu,int regle)
 	}
 	else if(taille_regle != 0)
 	{				
-		indexReduction = taille_ast(ast);
-		index_parenthese_ouvrante = indice_crochet_ouvrant(ast,indice_crochet_fermant(ast,indexReduction-1));
+		indice_reduction = taille_ast(ast);
+		index_parenthese_ouvrante = indice_crochet_ouvrant(ast,indice_crochet_fermant(ast,indice_reduction-1));
 		mettre_non_terminal = indice_non_terminal(ast,taille_regle);
 		i=0;
 		taille_arbre = taille_ast(ast);
