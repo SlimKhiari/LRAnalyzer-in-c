@@ -57,7 +57,7 @@ int indice_crochet_ouvrant(char* ast, int indice_crochet_fermant_recup)
     return indice_crochet_ouvrant_recup;
 }
 
-int index_non_terminal(char* ast, int taille_regle)
+int indice_non_terminal(char* ast, int taille_regle)
 {
     int i=0;
     int  index_crochet_ouvrant_de_non_terminal_a_ajouter = taille_ast(ast)-1;
@@ -152,7 +152,7 @@ char* ast_reduction(char* ast, int taille_regle, file_read fichier_lu,int regle)
 	{				
 		indexReduction = taille_ast(ast);
 		index_parenthese_ouvrante = indice_crochet_ouvrant(ast,indice_crochet_fermant(ast,indexReduction-1));
-		mettre_non_terminal = index_non_terminal(ast,taille_regle);
+		mettre_non_terminal = indice_non_terminal(ast,taille_regle);
 		i=0;
 		taille_arbre = taille_ast(ast);
 		
