@@ -11,7 +11,7 @@
 #define MAX 1000
 
 int taille_ast(char *ast);
-int index_non_terminal(char* ast, int taille_regle);
+int indice_non_terminal(char* ast, int taille_regle);
 int indice_crochet_ouvrant(char* ast, int indice_crochet_fermant_recup);
 int indice_crochet_fermant(char* ast, int indice_crochet_fermant_recup);
 void afficher_ast(char *ast);
