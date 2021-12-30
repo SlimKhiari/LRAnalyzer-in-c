@@ -144,7 +144,7 @@ char* ast_reduction(char* ast, int taille_regle, file_read fichier_lu,int regle)
 	if(taille_regle == 0)
 	{
 		taille_arbre = taille_ast(ast);
-		ast[taille_arbre] =fichier_lu.G.rules[regle-1].lhs ;
+		ast[taille_arbre] = fichier_lu.G.rules[regle-1].lhs ;
 		ast[taille_arbre+1] ='[';
 		ast[taille_arbre+2] =']';
 	}
