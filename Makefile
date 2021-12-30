@@ -1,2 +1,2 @@
 final:
-	gcc *.c -o LRanalyzer
+	@gcc *.c -o LRanalyzer
