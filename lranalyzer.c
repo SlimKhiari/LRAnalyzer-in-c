@@ -46,11 +46,11 @@ void afficher_pile(Pile *pile)
 	{
 		if(actuel->lettre_nombre > 9)
 		{
-			printf("%c ",actuel->lettre_nombre);
+			printf("%c",actuel->lettre_nombre);
 		}
 		else 
 		{
-			printf("%d ",actuel->lettre_nombre);
+			printf("%d",actuel->lettre_nombre);
 		}
 		actuel = actuel->suivant;
 	}
@@ -121,7 +121,7 @@ void afficher_file(File *file)
 	Element *actuel = file->premier;
 	while(actuel != NULL)
 	{
-		printf("%c ",actuel->lettre_nombre);
+		printf("%c",actuel->lettre_nombre);
 		actuel = actuel->suivant;
 	}
 }
@@ -334,7 +334,7 @@ Pile pile_reduction_derniere_etape(file_read fichier_lu, Pile *pile,char *les_te
 	int regle,j,i;
 	
 	regle = table[numero_de_ligne_a_regarder][o].numero_red_dec;
-	printf("\n%c%d > ",table[numero_de_ligne_a_regarder][o].red_dec,table[numero_de_ligne_a_regarder][o].numero_red_dec-1);
+	printf("\n%c%d  ",table[numero_de_ligne_a_regarder][o].red_dec,table[numero_de_ligne_a_regarder][o].numero_red_dec-1);
 	
 	// savoir jusqu'à quand on va s'arreter à supprimer dans la pile, ensuite on supprime pour remplacer avec la bonne regle
 	j=0;
