@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
 	FILE *f=fopen(argv[1], "r");
 	char caractere_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique depuis la table 2D
 	size_t numero_de_ligne_a_regarder; // pour récupérer la bonne transformation nécessaire pour l'analyse synthaxique depuis la table 2D
+	int dec=0; // pour l'affichage
 	
 	//Les variables utilisées pour construire l'ast 
 	char *ast = (char*) malloc(MAX*sizeof(char*)); // utilisé pour enregistrer l'ast
@@ -76,8 +77,28 @@ int main(int argc, char* argv[])
 	/***********************************************************************************************************************/
 	
 	//début de l'analyse synthaxique 
-	printf("L'analyse synthaxique du %s sur %s : \n\n",argv[1], argv[2]);					
-	printf("flot: "); afficher_file(flot); printf(" | "); printf("pile: ");afficher_pile(pile);
+	printf("    ");printf("Flot");
+	Element *actuel = flot->premier;
+	while(actuel != NULL)
+	{
+		printf(" ");
+		actuel = actuel->suivant;
+	}	
+	printf("Pile\n");
+	printf("    ");	
+	for(i=0; i<3; i++)
+	{
+		Element *actuel = flot->premier;
+		while(actuel != NULL)
+		{
+			printf("_");
+			actuel = actuel->suivant;
+		}
+	}
+	printf("\n");	
+	printf("    ");afficher_file(flot); printf(" | "); afficher_pile(pile);
+	
+	
 	numero_de_ligne_a_regarder = recup_premier_element_pile(pile);
 	caractere_a_regarder = recup_premier_element_file(flot);
 	for(o=0;o<nbr_colonnes;o++)
@@ -88,6 +109,7 @@ int main(int argc, char* argv[])
 			break;
 		}			
 	}
+	
 	if(verif_caractere_dans_grammaire==0)
 	{
 		printf("\n>> Caractere non reconnu par la grammaire\n");
@@ -164,7 +186,8 @@ int main(int argc, char* argv[])
 					// traiter le décalage dans la pile
 					if(table[numero_de_ligne_a_regarder][i].red_dec == 'd')
 					{
-						printf("\n%c%d > ",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec);
+						dec++;
+						printf("\n%c%d  ",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec);
 						// ajout du symbole "d" et le numéro qui correspond
 						empiler(pile,caractere_a_regarder);
 						empiler(pile,table[numero_de_ligne_a_regarder][i].numero_red_dec);
@@ -177,7 +200,7 @@ int main(int argc, char* argv[])
 					// traiter la réduction dans la pile
 					else if(table[numero_de_ligne_a_regarder][i].red_dec == 'r')
 					{
-						printf("\n%c%d > ",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec-1);
+						printf("\n%c%d  ",table[numero_de_ligne_a_regarder][i].red_dec,table[numero_de_ligne_a_regarder][i].numero_red_dec-1);
 						// connaitre le numero de la regle à appliquer
 						regle = table[numero_de_ligne_a_regarder][i].numero_red_dec;
 						// savoir jusqu'à quand on va s'arreter à supprimer dans la pile, ensuite on supprime pour remplacer avec la bonne regle
@@ -225,7 +248,7 @@ int main(int argc, char* argv[])
 					i++;
 				}	
 		}
-		printf("flot: "); afficher_file(flot); printf(" | "); printf("pile: ");afficher_pile(pile);
+		
 		if(verif_caractere_dans_grammaire==0)
 		{
 			printf("\n>> Caractere non reconnu par la grammaire\n");
@@ -237,6 +260,10 @@ int main(int argc, char* argv[])
 			free(les_terminaux_et_non);
 			free(ast);
 			return 0;
-		}	
+		}
+		
+		afficher_file(flot); 
+		for(i=0;i<dec;i++) printf(" "); printf(" | "); 
+		afficher_pile(pile);
 	}
 }
