@@ -1,4 +1,4 @@
-// Auteurs : Slim Khiari et Chahed Benslama (aidé par Antoine Vidal pour les fonctions des récupérations des indices pour le crochet ouvrant / fermant et le terminal)
+// Auteurs : Slim Khiari et Chahed Benslama (avec l'aide d'Antoine Vidal pour les fonctions des récupérations des indices pour le crochet ouvrant / fermant et le terminal)
 #include <stdio.h>
 #include <stdlib.h>
 #include "lranalyzer.h"
